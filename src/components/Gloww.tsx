@@ -43,8 +43,19 @@ export function Gloww() {
     document.body.appendChild(root);
     const s = document.createElement('script');
     s.src = '/embed/paris-widget-snippet.js';
-    document.body.appendChild(s);
+    s.async = true;
+    let loaded = false;
+    const load = () => {
+      if (loaded) return;
+      loaded = true;
+      document.body.appendChild(s);
+    };
+    const events = ['pointerdown', 'scroll', 'keydown', 'touchstart'];
+    events.forEach((e) => window.addEventListener(e, load, { once: true, passive: true }));
+    const t = window.setTimeout(load, 4000);
     return () => {
+      window.clearTimeout(t);
+      events.forEach((e) => window.removeEventListener(e, load));
       s.remove();
       document.getElementById('paris-widget-root')?.remove();
       document.querySelectorAll('style').forEach((el) => {
@@ -55,14 +66,6 @@ export function Gloww() {
 
   useEffect(() => {
     document.title = 'Gloww – Meet Paris, your AI Beauty Consultant';
-    const id = 'gloww-fonts';
-    if (!document.getElementById(id)) {
-      const l = document.createElement('link');
-      l.id = id;
-      l.rel = 'stylesheet';
-      l.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Karla:wght@400;500;600&display=swap';
-      document.head.appendChild(l);
-    }
     const els = document.querySelectorAll('[data-reveal]');
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
@@ -118,7 +121,7 @@ export function Gloww() {
       <header id="top" style={{ background: `radial-gradient(ellipse at 20% 30%, ${C.taupe} 0%, ${C.deep} 70%)` }} className="relative overflow-hidden">
         <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-3xl opacity-30" style={{ background: C.gold }} />
         <div className="max-w-6xl mx-auto px-5 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center relative">
-          <div data-reveal style={reveal}>
+          <div>
             <p style={{ color: C.gold }} className="text-xs tracking-[0.35em] uppercase mb-4">Beauty without borders · KSA | GCC</p>
             <h1 style={{ fontFamily: serif, color: C.cream }} className="text-5xl md:text-6xl leading-[1.05] font-semibold">
               Welcome to Gloww
@@ -130,7 +133,7 @@ export function Gloww() {
               Paris will save you time in finding the perfect makeup look for your occasion.
             </p>
           </div>
-          <div data-reveal style={reveal} className="flex justify-center">
+          <div className="flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 rounded-[2rem] blur-2xl opacity-50" style={{ background: roseGrad }} />
               <picture>

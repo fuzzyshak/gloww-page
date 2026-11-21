@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Gloww } from "@/components/Gloww";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Gloww Test – Meet Paris, your AI Beauty Consultant" },
